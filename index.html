@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Gradi Theory Flow Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- 左：SVG 図解 -->
+  <div class="diagram">
+    <svg id="gradi-svg" width="600" height="250" viewBox="0 0 1200 500">
+
+      <!-- U Box -->
+      <rect x="80" y="140" width="180" height="120" rx="12"
+            stroke="#4A90E2" stroke-width="3" fill="none"/>
+      <text x="170" y="205" font-size="48" text-anchor="middle"
+            fill="#4A90E2" font-family="sans-serif">U</text>
+      <text x="170" y="245" font-size="20" text-anchor="middle"
+            fill="#333333" font-family="sans-serif">偏り / 差 / 勾配</text>
+
+      <!-- VU Arrow -->
+      <line id="vu-line" x1="280" y1="200" x2="400" y2="200"
+            stroke="#4A90E2" stroke-width="2"/>
+      <polygon id="vu-arrow" points="400,200 385,190 385,210"
+               fill="#4A90E2"/>
+
+      <!-- L Box -->
+      <rect x="440" y="140" width="180" height="120" rx="12"
+            stroke="#F5A623" stroke-width="3" fill="none"/>
+      <text x="530" y="205" font-size="48" text-anchor="middle"
+            fill="#F5A623" font-family="sans-serif">L</text>
+      <text x="530" y="245" font-size="20" text-anchor="middle"
+            fill="#333333" font-family="sans-serif">流れやすさ / 伝わりやすさ</text>
+
+      <!-- Φ Arrow（動く部分） -->
+      <line id="phi-line" x1="640" y1="200" x2="640" y2="200"
+            stroke="#7ED321" stroke-width="6"/>
+      <polygon id="phi-arrow" points="640,200 620,185 620,215"
+               fill="#7ED321"/>
+
+    </svg>
+  </div>
+
+  <!-- 右：計算フォーム -->
+  <div class="form">
+    <h2>Gradi Theory 計算</h2>
+
+    <label>偏り U</label>
+    <input id="inputU" type="number" step="0.1" value="100">
+
+    <label>利用しやすさ L</label>
+    <input id="inputL" type="number" step="0.1" value="10">
+
+    <button id="calcBtn">計算する</button>
+
+    <h3>結果</h3>
+    <p>Φ（流れ）: <span id="phiValue">-</span></p>
+    <p>向き: <span id="direction">-</span></p>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
