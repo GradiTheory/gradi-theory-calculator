@@ -41,6 +41,11 @@
       <polygon id="phi-arrow" points="640,200 620,185 620,215"
                fill="#7ED321"/>
 
+      <!-- 式（任意で表示したい場合） -->
+      <text x="600" y="340" font-size="28" text-anchor="middle"
+            fill="#333333" font-family="serif">
+        Φ⃗ = V⃗_U · U · L
+      </text>
     </svg>
   </div>
 
@@ -59,6 +64,21 @@
     <h3>結果</h3>
     <p>Φ（流れ）: <span id="phiValue">-</span></p>
     <p>向き: <span id="direction">-</span></p>
+
+    <div class="presets">
+      <h3>プリセット</h3>
+      <button onclick="applyPreset('electric')">電気</button>
+      <button onclick="applyPreset('heat')">熱</button>
+      <button onclick="applyPreset('diffusion')">拡散</button>
+      <button onclick="applyPreset('behavior')">行動</button>
+      <button onclick="applyPreset('information')">情報</button>
+    </div>
+
+    <h3>説明</h3>
+    <p>U の意味: <span id="uDesc">-</span></p>
+    <p>L の意味: <span id="lDesc">-</span></p>
+    <p>U の単位: <span id="uUnit">-</span></p>
+    <p>L の単位: <span id="lUnit">-</span></p>
   </div>
 
 </div>
