@@ -19,19 +19,49 @@ body {
   flex: 1;
 }
 
+h2, h3 {
+  margin-top: 0;
+}
+
 input {
   width: 100%;
   padding: 8px;
   margin-bottom: 16px;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
 button {
-  width: 100%;
-  padding: 10px;
-  font-size: 18px;
-  background: #4A90E2;
-  color: #fff;
+  padding: 8px 14px;
+  font-size: 14px;
   border: none;
   cursor: pointer;
+}
+
+#calcBtn {
+  width: 100%;
+  margin-bottom: 16px;
+  background: #4A90E2;
+  color: #fff;
+  font-size: 18px;
+}
+
+.presets {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.presets button {
+  margin-right: 8px;
+  margin-bottom: 8px;
+  background: #eeeeee;
+  border: 1px solid #cccccc;
+}
+
+.presets button:hover {
+  background: #dddddd;
+}
+
+p {
+  margin: 4px 0;
 }
