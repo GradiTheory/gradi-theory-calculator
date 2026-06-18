@@ -79,6 +79,41 @@ function applyPreset(type) {
       phiUnit = "bit/s（情報流）";
       phiMeaning = "単位時間あたりの情報の流れ";
       break;
+
+    case 'light':
+      U = 500;
+      L = 0.7;
+      uDesc = "光強度の差（Light intensity gradient）";
+      lDesc = "透過率（Transmittance）";
+      uUnit = "lx";
+      lUnit = "（無次元）";
+      phiUnit = "lx（光の流れ）";
+      phiMeaning = "光強度 × 透過率としての光の流れ";
+      break;
+
+    case 'pressure':
+      U = 200;
+      L = 0.3;
+      uDesc = "圧力差（Pressure difference）";
+      lDesc = "流体の通りやすさ（Fluid conductance）";
+      uUnit = "Pa";
+      lUnit = "m³/(s·Pa)";
+      phiUnit = "m³/s（流量）";
+      phiMeaning = "圧力差によって生じる流体の流れ";
+      break;
+
+    case 'economy':
+      U = 50;
+      L = 0.4;
+      uDesc = "価格差（Price gradient）";
+      lDesc = "流動性（Liquidity）";
+      uUnit = "円";
+      lUnit = "（無次元）";
+      phiUnit = "円/s（資金流）";
+      phiMeaning = "価格差 × 流動性としてのお金の流れ";
+      break;
+
+      
   }
 
   document.getElementById("inputU").value = U;
