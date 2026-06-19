@@ -1,10 +1,10 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <title>Gradi Theory Calculator</title>
   <link rel="stylesheet" href="style.css">
+
   <!-- MathJax -->
   <script>
     window.MathJax = {
@@ -12,176 +12,191 @@
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+
   <script src="script.js" defer></script>
 </head>
+
 <body>
-  <header>
-    <h1>Gradi Theory 計算サイト</h1>
-    <p>モノ(M)とソラ(S)から偏り(G)が生まれ、方向(A)と利用しやすさ(L)によって流れ(Φ)が生じる。</p>
-  </header>
 
-  <!-- ① 理論図解 -->
-  <section id="diagram-section">
-    <h2>理論図解</h2>
-    <div id="diagram-wrapper">
-      <svg id="gradi-diagram" viewBox="0 0 400 225">
-        <!-- M -->
-        <circle id="node-M" cx="80" cy="60" r="20" class="node-m" />
-        <text x="80" y="65" class="node-label">M</text>
+<header>
+  <h1>Gradi Theory 計算サイト</h1>
+  <p>モノ(M)とソラ(S)から偏り(G)が生まれ、方向(A)と利用しやすさ(L)によって流れ(Φ)が生じる。</p>
+</header>
 
-        <!-- S -->
-        <circle id="node-S" cx="80" cy="160" r="20" class="node-s" />
-        <text x="80" y="165" class="node-label">S</text>
+<!-- ① 理論図解 -->
+<section id="diagram-section">
+  <h2>理論図解</h2>
+  <div id="diagram-wrapper">
+    <svg id="gradi-diagram" viewBox="0 0 400 225">
 
-        <!-- G -->
-        <circle id="node-G" cx="200" cy="110" r="22" class="node-g" />
-        <text x="200" y="115" class="node-label">G</text>
+      <!-- M -->
+      <circle id="node-M" cx="80" cy="60" r="20" class="node-m" />
+      <text x="80" y="65" class="node-label">M</text>
 
-        <!-- A / L -->
-        <circle id="node-AL" cx="310" cy="60" r="20" class="node-al" />
-        <text x="310" y="55" class="node-label-small">A</text>
-        <text x="310" y="70" class="node-label-small">L</text>
+      <!-- S -->
+      <circle id="node-S" cx="80" cy="160" r="20" class="node-s" />
+      <text x="80" y="165" class="node-label">S</text>
 
-        <!-- Φ -->
-        <circle id="node-Phi" cx="310" cy="170" r="22" class="node-phi" />
-        <text x="310" y="175" class="node-label">Φ</text>
+      <!-- G -->
+      <circle id="node-G" cx="200" cy="110" r="22" class="node-g" />
+      <text x="200" y="115" class="node-label">G</text>
 
-        <!-- M→G -->
-        <line id="arrow-MG" x1="100" y1="60" x2="178" y2="100" class="arrow" />
-        <!-- S→G -->
-        <line id="arrow-SG" x1="100" y1="160" x2="178" y2="120" class="arrow" />
-        <!-- G→AL -->
-        <line id="arrow-GAL" x1="222" y1="100" x2="290" y2="70" class="arrow" />
-        <!-- AL→Φ（Flow） -->
-        <line id="arrow-Flow" x1="310" y1="82" x2="310" y2="148" class="arrow-flow" />
-      </svg>
-    </div>
-  </section>
+      <!-- A/L -->
+      <circle id="node-AL" cx="310" cy="60" r="20" class="node-al" />
+      <text x="310" y="55" class="node-label-small">A</text>
+      <text x="310" y="70" class="node-label-small">L</text>
 
-  <!-- ② 計算フォーム -->
-  <section id="form-section">
-    <h2>入力と計算</h2>
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="input-M">M（モノ：集める性質）</label>
-        <input id="input-M" type="number" step="0.01" value="10">
-      </div>
-      <div class="form-group">
-        <label for="input-S">S（ソラ：均す性質）</label>
-        <input id="input-S" type="number" step="0.01" value="3">
-      </div>
-      <div class="form-group">
-        <label for="input-A">A（方向）</label>
-        <select id="input-A">
-          <option value="1,0">→ (1,0)</option>
-          <option value="-1,0">← (-1,0)</option>
-          <option value="0,1">↑ (0,1)</option>
-          <option value="0,-1">↓ (0,-1)</option>
-          <option value="1,1">↗ (1,1)</option>
-          <option value="1,-1">↘ (1,-1)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="input-L">L（利用しやすさ）</label>
-        <input id="input-L" type="number" step="0.01" value="0.8">
-      </div>
-      <div class="form-group">
-        <label for="input-T">T（閾値）</label>
-        <input id="input-T" type="number" step="0.01" value="0.1">
-      </div>
-      <div class="form-group checkbox-group">
-        <label>
-          <input id="input-normalize-G" type="checkbox">
-          G を正規化する：$G = \dfrac{M-S}{M+S}$
-        </label>
-      </div>
-    </div>
-    <div class="button-row">
-      <button id="btn-calc">計算する</button>
-      <span id="status-message"></span>
+      <!-- Φ -->
+      <circle id="node-Phi" cx="310" cy="170" r="22" class="node-phi" />
+      <text x="310" y="175" class="node-label">Φ</text>
+
+      <!-- Arrows -->
+      <line id="arrow-MG" x1="100" y1="60" x2="178" y2="100" class="arrow" />
+      <line id="arrow-SG" x1="100" y1="160" x2="178" y2="120" class="arrow" />
+      <line id="arrow-GAL" x1="222" y1="100" x2="290" y2="70" class="arrow" />
+      <line id="arrow-Flow" x1="310" y1="82" x2="310" y2="148" class="arrow-flow" />
+
+    </svg>
+  </div>
+</section>
+
+<!-- ② 入力フォーム -->
+<section id="form-section">
+  <h2>入力と計算</h2>
+
+  <div class="form-grid">
+
+    <div class="form-group">
+      <label for="input-M">M（モノ）</label>
+      <input id="input-M" type="number" step="0.01" value="10">
     </div>
 
-    <div class="result-grid">
-      <div class="result-item">
-        <div class="result-label">G（偏り）</div>
-        <div id="output-G" class="result-value">-</div>
-      </div>
-      <div class="result-item">
-        <div class="result-label">Φ（流れ）</div>
-        <div id="output-Phi" class="result-value">-</div>
-      </div>
+    <div class="form-group">
+      <label for="input-S">S（ソラ）</label>
+      <input id="input-S" type="number" step="0.01" value="3">
     </div>
-  </section>
 
-  <!-- ③ 計算式（横方向） -->
-  <section id="formula-section">
-    <h2>計算式</h2>
-    <div id="formula-row">
-      <div class="formula-item">\( G = M - S \)</div>
-      <div class="formula-separator">｜</div>
-      <div class="formula-item">\( \Phi = A L (M - S) \)</div>
-      <div class="formula-separator">｜</div>
-      <div class="formula-item">\( |M - S| &lt; T \Rightarrow \Phi = 0 \)</div>
+    <div class="form-group">
+      <label for="input-A">A（方向）</label>
+      <select id="input-A">
+        <option value="1,0">→ (1,0)</option>
+        <option value="-1,0">← (-1,0)</option>
+        <option value="0,1">↑ (0,1)</option>
+        <option value="0,-1">↓ (0,-1)</option>
+        <option value="1,1">↗ (1,1)</option>
+        <option value="1,-1">↘ (1,-1)</option>
+      </select>
     </div>
-  </section>
 
-  <!-- ④ Flow 視覚化 -->
-  <section id="flow-section">
-    <h2>流れの可視化</h2>
-    <div id="flow-visual">
-      <div id="flow-arrow-wrapper">
-        <div id="flow-arrow"></div>
-      </div>
-      <div id="flow-info">
-        <div>太さ：|Φ| に比例</div>
-        <div>速度：|Φ| に反比例</div>
-        <div>透明度：L に比例</div>
-        <div>向き：A によって回転</div>
-      </div>
+    <div class="form-group">
+      <label for="input-L">L（利用しやすさ）</label>
+      <input id="input-L" type="number" step="0.01" value="0.8">
     </div>
-  </section>
 
-  <!-- ⑤ プリセット -->
-  <section id="preset-section">
-    <h2>プリセット（現象の例）</h2>
-    <div id="preset-cards">
+    <div class="form-group">
+      <label for="input-T">T（閾値）</label>
+      <input id="input-T" type="number" step="0.01" value="0.1">
+    </div>
 
-  <div class="preset-card electric" data-preset="electric">
-    <h3>電気</h3>
-    <p>電位差 → 電流</p>
-    <span class="unit">Φ: A（電流）</span>
+    <div class="form-group checkbox-group">
+      <label>
+        <input id="input-normalize-G" type="checkbox">
+        G を正規化する：$G = \dfrac{M-S}{M+S}$
+      </label>
+    </div>
+
   </div>
 
-  <div class="preset-card heat" data-preset="heat">
-    <h3>熱</h3>
-    <p>温度差 → 熱流</p>
-    <span class="unit">Φ: W（熱流）</span>
+  <div class="button-row">
+    <button id="btn-calc">計算する</button>
+    <span id="status-message"></span>
   </div>
 
-  <div class="preset-card water" data-preset="water">
-    <h3>水</h3>
-    <p>高さ差 → 水流</p>
-    <span class="unit">Φ: m³/s（水流）</span>
+  <div class="result-grid">
+    <div class="result-item">
+      <div class="result-label">G（偏り）</div>
+      <div id="output-G" class="result-value">-</div>
+    </div>
+
+    <div class="result-item">
+      <div class="result-label">Φ（流れ）</div>
+      <div id="output-Phi" class="result-value">-</div>
+      <div id="phi-unit-label" class="unit-label">A</div>
+    </div>
   </div>
 
-  <div class="preset-card economy" data-preset="economy">
-    <h3>経済</h3>
-    <p>需要差 → 資金流</p>
-    <span class="unit">Φ: 円/s（資金流）</span>
+</section>
+
+<!-- ③ 計算式 -->
+<section id="formula-section">
+  <h2>計算式</h2>
+  <div id="formula-row">
+    <div class="formula-item">\( G = M - S \)</div>
+    <div class="formula-separator">｜</div>
+    <div class="formula-item">\( \Phi = A L (M - S) \)</div>
+    <div class="formula-separator">｜</div>
+    <div class="formula-item">\( |M - S| &lt; T \Rightarrow \Phi = 0 \)</div>
   </div>
+</section>
 
-  <div class="preset-card info" data-preset="info">
-    <h3>情報</h3>
-    <p>注目差 → 情報流</p>
-    <span class="unit">Φ: 1/s（情報流）</span>
+<!-- ④ Flow 可視化 -->
+<section id="flow-section">
+  <h2>流れの可視化</h2>
+  <div id="flow-visual">
+    <div id="flow-arrow-wrapper">
+      <div id="flow-arrow"></div>
+    </div>
+    <div id="flow-info">
+      <div>太さ：|Φ| に比例</div>
+      <div>速度：|Φ| に反比例</div>
+      <div>透明度：L に比例</div>
+      <div>向き：A によって回転</div>
+    </div>
   </div>
+</section>
 
-</div>
+<!-- ⑤ プリセット（カード化） -->
+<section id="preset-section">
+  <h2>プリセット（現象の例）</h2>
 
-  </section>
+  <div id="preset-cards">
 
-  <footer>
-    <p>Gradi Theory Ver.0.4 / モノとソラによる偏りと流れの理論</p>
-  </footer>
+    <div class="preset-card electric" data-preset="electric">
+      <h3>電気</h3>
+      <p>電位差 → 電流</p>
+      <span class="unit">Φ: A（電流）</span>
+    </div>
+
+    <div class="preset-card heat" data-preset="heat">
+      <h3>熱</h3>
+      <p>温度差 → 熱流</p>
+      <span class="unit">Φ: W（熱流）</span>
+    </div>
+
+    <div class="preset-card water" data-preset="water">
+      <h3>水</h3>
+      <p>高さ差 → 水流</p>
+      <span class="unit">Φ: m³/s（水流）</span>
+    </div>
+
+    <div class="preset-card economy" data-preset="economy">
+      <h3>経済</h3>
+      <p>需要差 → 資金流</p>
+      <span class="unit">Φ: 円/s（資金流）</span>
+    </div>
+
+    <div class="preset-card info" data-preset="info">
+      <h3>情報</h3>
+      <p>注目差 → 情報流</p>
+      <span class="unit">Φ: 1/s（情報流）</span>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <p>Gradi Theory Ver.0.4 / モノとソラによる偏りと流れの理論</p>
+</footer>
+
 </body>
 </html>
