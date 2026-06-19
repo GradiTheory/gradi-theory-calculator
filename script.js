@@ -9,6 +9,17 @@ const presets = {
   info:     { M: 300, S: 200, L: 0.7, A: "0,1", T: 10 }
 };
 
+/* ============================
+   SI単位（G と Φ）
+============================ */
+const gUnits = {
+  electric: "V（電位差）",
+  heat:     "K（温度差）",
+  water:    "m（高さ差）",
+  economy:  "円（価格差）",
+  info:     "（無次元・注目差）"
+};
+
 const phiUnits = {
   electric: "A（電流）",
   heat:     "W（熱流）",
@@ -31,6 +42,10 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // 初期単位（電気）
+  document.getElementById("g-unit-label").innerText = gUnits.electric;
+  document.getElementById("phi-unit-label").innerText = phiUnits.electric;
+
   calc();
 });
 
@@ -46,6 +61,8 @@ function loadPreset(key) {
   document.getElementById("input-A").value = p.A;
   document.getElementById("input-T").value = p.T;
 
+  // ★ G と Φ の単位を切り替え
+  document.getElementById("g-unit-label").innerText = gUnits[key];
   document.getElementById("phi-unit-label").innerText = phiUnits[key];
 
   calc();
