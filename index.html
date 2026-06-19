@@ -144,13 +144,40 @@
   <!-- ⑤ プリセット -->
   <section id="preset-section">
     <h2>プリセット（現象の例）</h2>
-    <div id="preset-buttons">
-      <button data-preset="electric">電気（電位差 → 電流）</button>
-      <button data-preset="heat">熱（温度差 → 熱流）</button>
-      <button data-preset="water">水（高さ差 → 水流）</button>
-      <button data-preset="economy">経済（需要差 → 資金流）</button>
-      <button data-preset="info">情報（関心差 → 情報流）</button>
-    </div>
+    <div id="preset-cards">
+
+  <div class="preset-card electric" data-preset="electric">
+    <h3>電気</h3>
+    <p>電位差 → 電流</p>
+    <span class="unit">Φ: A（電流）</span>
+  </div>
+
+  <div class="preset-card heat" data-preset="heat">
+    <h3>熱</h3>
+    <p>温度差 → 熱流</p>
+    <span class="unit">Φ: W（熱流）</span>
+  </div>
+
+  <div class="preset-card water" data-preset="water">
+    <h3>水</h3>
+    <p>高さ差 → 水流</p>
+    <span class="unit">Φ: m³/s（水流）</span>
+  </div>
+
+  <div class="preset-card economy" data-preset="economy">
+    <h3>経済</h3>
+    <p>需要差 → 資金流</p>
+    <span class="unit">Φ: 円/s（資金流）</span>
+  </div>
+
+  <div class="preset-card info" data-preset="info">
+    <h3>情報</h3>
+    <p>注目差 → 情報流</p>
+    <span class="unit">Φ: 1/s（情報流）</span>
+  </div>
+
+</div>
+
   </section>
 
   <footer>
