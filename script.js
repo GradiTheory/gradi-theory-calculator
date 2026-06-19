@@ -42,7 +42,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 初期単位（電気）
   document.getElementById("g-unit-label").innerText = gUnits.electric;
   document.getElementById("phi-unit-label").innerText = phiUnits.electric;
 
@@ -61,7 +60,6 @@ function loadPreset(key) {
   document.getElementById("input-A").value = p.A;
   document.getElementById("input-T").value = p.T;
 
-  // ★ G と Φ の単位を切り替え
   document.getElementById("g-unit-label").innerText = gUnits[key];
   document.getElementById("phi-unit-label").innerText = phiUnits[key];
 
@@ -102,6 +100,28 @@ function calc() {
   const outG = document.getElementById("output-G");
   const outPhi = document.getElementById("output-Phi");
 
+  /* R（モノ・ソラ比） */
+  let R = (S !== 0) ? (M / S) : Infinity;
+
+  const outR = document.getElementById("output-R");
+  const rState = document.getElementById("r-state-label");
+
+  outR.textContent = R.toFixed(3);
+
+  outR.classList.remove("r-mono", "r-sora", "r-equal");
+
+  if (R > 1) {
+    outR.classList.add("r-mono");
+    rState.textContent = "モノ優勢";
+  } else if (R < 1) {
+    outR.classList.add("r-sora");
+    rState.textContent = "ソラ優勢";
+  } else {
+    outR.classList.add("r-equal");
+    rState.textContent = "均衡";
+  }
+
+  /* G（偏り） */
   let Graw = M - S;
   let G = normalizeG && (M + S !== 0) ? (M - S) / (M + S) : Graw;
 
@@ -154,8 +174,4 @@ function updateFlowVisual(A, L, Phi, flowed) {
   arrow.style.opacity = flowed ? Math.min(1, 0.2 + L) : 0.15;
 
   const angle = Math.atan2(A[1], A[0]) * 180 / Math.PI;
-  arrow.style.transform = `rotate(${angle}deg)`;
-
-  const duration = flowed ? Math.max(0.25, 1.2 / (1 + absPhi)) : 2.0;
-  arrow.style.animationDuration = `${duration}s`;
-}
+  arrow.style.transform = `rotate(${angle}deg)
