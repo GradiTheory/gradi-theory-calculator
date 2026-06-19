@@ -1,136 +1,128 @@
-function updateDiagram(U, L) {
-  const phi = Math.abs(U) * L;
-  const direction = U >= 0 ? 1 : -1;
+// script.js
+const presets = {
+  electric: { // 電位差 → 電流
+    M: 10, S: 3, L: 0.8, A: "1,0", T: 0.1
+  },
+  heat: { // 温度差 → 熱流
+    M: 80, S: 20, L: 0.5, A: "0,1", T: 0.5
+  },
+  water: { // 高さ差 → 水流
+    M: 5, S: 1, L: 0.9, A: "1,-1", T: 0.0
+  },
+  economy: { // 需要差 → 資金流
+    M: 120, S: 100, L: 0.3, A: "1,0", T: 5
+  },
+  info: { // 関心差 → 情報流
+    M: 300, S: 200, L: 0.7, A: "0,1", T: 10
+  }
+};
 
-  document.getElementById("phiValue").textContent = phi.toFixed(2);
-  document.getElementById("direction").textContent = direction === 1 ? "→" : "←";
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("btn-calc").addEventListener("click", calc);
+  document.querySelectorAll("#preset-buttons button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.preset;
+      loadPreset(key);
+    });
+  });
+  // 初期計算
+  calc();
+});
 
-  const baseX = 640;
-  const maxLen = 300;
-  const len = Math.min(phi * 0.1, maxLen) * direction;
-  const x2 = baseX + len;
-
-  const phiLine = document.getElementById("phi-line");
-  const phiArrow = document.getElementById("phi-arrow");
-
-  phiLine.setAttribute("x1", baseX);
-  phiLine.setAttribute("x2", x2);
-
-  const head = `${x2},200`;
-  const p1 = `${x2 - 20 * direction},185`;
-  const p2 = `${x2 - 20 * direction},215`;
-  phiArrow.setAttribute("points", `${head} ${p1} ${p2}`);
+function loadPreset(key) {
+  const p = presets[key];
+  if (!p) return;
+  document.getElementById("input-M").value = p.M;
+  document.getElementById("input-S").value = p.S;
+  document.getElementById("input-L").value = p.L;
+  document.getElementById("input-A").value = p.A;
+  document.getElementById("input-T").value = p.T;
+  calc();
 }
 
 function calc() {
-  const U = parseFloat(document.getElementById("inputU").value || 0);
-  const L = parseFloat(document.getElementById("inputL").value || 0);
-  updateDiagram(U, L);
-}
+  const M = parseFloat(document.getElementById("input-M").value);
+  const S = parseFloat(document.getElementById("input-S").value);
+  const L = parseFloat(document.getElementById("input-L").value);
+  const T = parseFloat(document.getElementById("input-T").value);
+  const A = document.getElementById("input-A").value.split(",").map(Number);
+  const normalizeG = document.getElementById("input-normalize-G").checked;
 
-function applyPreset(type) {
-  let U = 0, L = 0;
-  let uDesc = "", lDesc = "";
-  let uUnit = "", lUnit = "";
-  let phiUnit = "", phiMeaning = "";
+  const status = document.getElementById("status-message");
+  const outG = document.getElementById("output-G");
+  const outPhi = document.getElementById("output-Phi");
 
-  switch (type) {
-    case 'electric':
-      U = 100; L = 0.5;
-      uDesc = "電位差（Voltage difference）";
-      lDesc = "導電率（Electrical conductivity）";
-      uUnit = "V"; lUnit = "S/m";
-      phiUnit = "A/m²（電流密度）";
-      phiMeaning = "単位面積あたりの電流の流れ";
-      break;
-
-    case 'heat':
-      U = 30; L = 1.2;
-      uDesc = "温度差（Temperature gradient）";
-      lDesc = "熱伝導率（Thermal conductivity）";
-      uUnit = "K"; lUnit = "W/(m·K)";
-      phiUnit = "W/m²（熱流束）";
-      phiMeaning = "単位面積あたりの熱の流れ";
-      break;
-
-    case 'diffusion':
-      U = 10; L = 0.8;
-      uDesc = "濃度差（Concentration gradient）";
-      lDesc = "拡散係数（Diffusion coefficient）";
-      uUnit = "mol/m³"; lUnit = "m²/s";
-      phiUnit = "mol/(m²·s)";
-      phiMeaning = "単位面積あたりの物質の流れ";
-      break;
-
-    case 'behavior':
-      U = 5; L = 2.0;
-      uDesc = "意欲差（Motivation gradient）";
-      lDesc = "行動しやすさ（Behavioral ease）";
-      uUnit = "（無次元）"; lUnit = "（無次元）";
-      phiUnit = "（無次元）";
-      phiMeaning = "意欲 × 行動しやすさ";
-      break;
-
-    case 'information':
-      U = 20; L = 1.5;
-      uDesc = "情報量の差（Information gradient）";
-      lDesc = "伝わりやすさ（Transmission ease）";
-      uUnit = "bit"; lUnit = "（無次元）";
-      phiUnit = "bit/s（情報流）";
-      phiMeaning = "単位時間あたりの情報の流れ";
-      break;
-
-    case 'light':
-      U = 500;
-      L = 0.7;
-      uDesc = "光強度の差（Light intensity gradient）";
-      lDesc = "透過率（Transmittance）";
-      uUnit = "lx";
-      lUnit = "（無次元）";
-      phiUnit = "lx（光の流れ）";
-      phiMeaning = "光強度 × 透過率としての光の流れ";
-      break;
-
-    case 'pressure':
-      U = 200;
-      L = 0.3;
-      uDesc = "圧力差（Pressure difference）";
-      lDesc = "流体の通りやすさ（Fluid conductance）";
-      uUnit = "Pa";
-      lUnit = "m³/(s·Pa)";
-      phiUnit = "m³/s（流量）";
-      phiMeaning = "圧力差によって生じる流体の流れ";
-      break;
-
-    case 'economy':
-      U = 50;
-      L = 0.4;
-      uDesc = "価格差（Price gradient）";
-      lDesc = "流動性（Liquidity）";
-      uUnit = "円";
-      lUnit = "（無次元）";
-      phiUnit = "円/s（資金流）";
-      phiMeaning = "価格差 × 流動性としてのお金の流れ";
-      break;
-
-      
+  if (isNaN(M) || isNaN(S) || isNaN(L) || isNaN(T) || A.some(v => isNaN(v))) {
+    status.textContent = "入力値を確認してください。";
+    return;
   }
 
-  document.getElementById("inputU").value = U;
-  document.getElementById("inputL").value = L;
+  let Graw = M - S;
+  let G = Graw;
 
-  document.getElementById("uDesc").textContent = uDesc;
-  document.getElementById("lDesc").textContent = lDesc;
-  document.getElementById("uUnit").textContent = uUnit;
-  document.getElementById("lUnit").textContent = lUnit;
+  if (normalizeG && (M + S) !== 0) {
+    G = (M - S) / (M + S);
+  }
 
-  document.getElementById("phiUnit").textContent = phiUnit;
-  document.getElementById("phiMeaning").textContent = phiMeaning;
+  outG.textContent = G.toFixed(4);
 
-  document.getElementById("phiUnitSvg").textContent = `（単位: ${phiUnit}）`;
+  let Phi = 0;
+  let flowed = false;
 
-  updateDiagram(U, L);
+  if (Math.abs(Graw) < T) {
+    Phi = 0;
+    flowed = false;
+    status.textContent = "|M − S| < T のため、流れは発生しません（Φ = 0）。";
+  } else {
+    Phi = Graw * L; // A は方向として別扱い
+    flowed = true;
+    status.textContent = "|M − S| ≥ T のため、流れが発生しています。";
+  }
+
+  outPhi.textContent = Phi.toFixed(4);
+
+  updateDiagram(G, A, L, Phi, flowed);
+  updateFlowVisual(A, L, Phi, flowed);
 }
 
-document.getElementById("calcBtn").addEventListener("click", calc);
-calc();
+function updateDiagram(G, A, L, Phi, flowed) {
+  const arrowFlow = document.getElementById("arrow-Flow");
+  const nodeG = document.getElementById("node-G");
+  const nodePhi = document.getElementById("node-Phi");
+
+  const absPhi = Math.abs(Phi);
+
+  // Flow arrow thickness
+  arrowFlow.style.strokeWidth = flowed ? (2 + Math.min(6, absPhi * 0.8)) : 2;
+  arrowFlow.style.opacity = flowed ? Math.min(1, 0.3 + L) : 0.2;
+
+  // G node glow
+  const gGlow = flowed ? 0.4 + Math.min(0.6, Math.abs(G) * 0.2) : 0.2;
+  nodeG.style.filter = `drop-shadow(0 0 6px rgba(180,107,255,${gGlow}))`;
+
+  // Φ node glow
+  const phiGlow = flowed ? 0.4 + Math.min(0.6, absPhi * 0.15) : 0.2;
+  nodePhi.style.filter = `drop-shadow(0 0 8px rgba(255,95,122,${phiGlow}))`;
+}
+
+function updateFlowVisual(A, L, Phi, flowed) {
+  const arrow = document.getElementById("flow-arrow");
+  const absPhi = Math.abs(Phi);
+
+  // 太さ
+  const baseHeight = 6;
+  const newHeight = flowed ? baseHeight + Math.min(16, absPhi * 1.2) : baseHeight;
+  arrow.style.height = `${newHeight}px`;
+
+  // 透明度
+  arrow.style.opacity = flowed ? Math.min(1, 0.2 + L) : 0.15;
+
+  // 方向（A）
+  const angle = Math.atan2(A[1], A[0]) * 180 / Math.PI;
+  arrow.style.transform = `rotate(${angle}deg)`;
+
+  // 速度（アニメーション周期）
+  const baseDuration = 1.2;
+  const duration = flowed ? Math.max(0.25, baseDuration / (1 + absPhi)) : 2.0;
+  arrow.style.animationDuration = `${duration}s`;
+}
