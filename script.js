@@ -1,45 +1,78 @@
-// script.js
+/* ============================
+   プリセット定義
+============================ */
 const presets = {
-  electric: { // 電位差 → 電流
-    M: 10, S: 3, L: 0.8, A: "1,0", T: 0.1
-  },
-  heat: { // 温度差 → 熱流
-    M: 80, S: 20, L: 0.5, A: "0,1", T: 0.5
-  },
-  water: { // 高さ差 → 水流
-    M: 5, S: 1, L: 0.9, A: "1,-1", T: 0.0
-  },
-  economy: { // 需要差 → 資金流
-    M: 120, S: 100, L: 0.3, A: "1,0", T: 5
-  },
-  info: { // 関心差 → 情報流
-    M: 300, S: 200, L: 0.7, A: "0,1", T: 10
-  }
+  electric: { M: 10, S: 3, L: 0.8, A: "1,0", T: 0.1 },
+  heat:     { M: 80, S: 20, L: 0.5, A: "0,1", T: 0.5 },
+  water:    { M: 5,  S: 1,  L: 0.9, A: "1,-1", T: 0.0 },
+  economy:  { M: 120, S: 100, L: 0.3, A: "1,0", T: 5 },
+  info:     { M: 300, S: 200, L: 0.7, A: "0,1", T: 10 }
 };
 
+const phiUnits = {
+  electric: "A（電流）",
+  heat:     "W（熱流）",
+  water:    "m³/s（水流）",
+  economy:  "円/s（資金流）",
+  info:     "1/s（情報流）"
+};
+
+/* ============================
+   初期化
+============================ */
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-calc").addEventListener("click", calc);
-  document.querySelectorAll("#preset-buttons button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const key = btn.dataset.preset;
+
+  document.querySelectorAll(".preset-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const key = card.dataset.preset;
       loadPreset(key);
+      applyTheme(key);
     });
   });
-  // 初期計算
+
   calc();
 });
 
+/* ============================
+   プリセット読み込み
+============================ */
 function loadPreset(key) {
   const p = presets[key];
-  if (!p) return;
+
   document.getElementById("input-M").value = p.M;
   document.getElementById("input-S").value = p.S;
   document.getElementById("input-L").value = p.L;
   document.getElementById("input-A").value = p.A;
   document.getElementById("input-T").value = p.T;
+
+  document.getElementById("phi-unit-label").innerText = phiUnits[key];
+
   calc();
 }
 
+/* ============================
+   テーマ色切り替え
+============================ */
+function applyTheme(key) {
+  const themes = {
+    electric: "#4AA3FF",
+    heat:     "#FF6B6B",
+    water:    "#3ED6C4",
+    economy:  "#FFD966",
+    info:     "#B46BFF"
+  };
+
+  const color = themes[key];
+  document.documentElement.style.setProperty("--theme-color", color);
+
+  document.getElementById("flow-arrow").style.background =
+    `linear-gradient(90deg, ${color}, #ffffff)`;
+}
+
+/* ============================
+   計算
+============================ */
 function calc() {
   const M = parseFloat(document.getElementById("input-M").value);
   const S = parseFloat(document.getElementById("input-S").value);
@@ -52,17 +85,8 @@ function calc() {
   const outG = document.getElementById("output-G");
   const outPhi = document.getElementById("output-Phi");
 
-  if (isNaN(M) || isNaN(S) || isNaN(L) || isNaN(T) || A.some(v => isNaN(v))) {
-    status.textContent = "入力値を確認してください。";
-    return;
-  }
-
   let Graw = M - S;
-  let G = Graw;
-
-  if (normalizeG && (M + S) !== 0) {
-    G = (M - S) / (M + S);
-  }
+  let G = normalizeG && (M + S !== 0) ? (M - S) / (M + S) : Graw;
 
   outG.textContent = G.toFixed(4);
 
@@ -72,11 +96,11 @@ function calc() {
   if (Math.abs(Graw) < T) {
     Phi = 0;
     flowed = false;
-    status.textContent = "|M − S| < T のため、流れは発生しません（Φ = 0）。";
+    status.textContent = "閾値未満：流れは発生しません（Φ = 0）";
   } else {
-    Phi = Graw * L; // A は方向として別扱い
+    Phi = Graw * L;
     flowed = true;
-    status.textContent = "|M − S| ≥ T のため、流れが発生しています。";
+    status.textContent = "流れが発生しています";
   }
 
   outPhi.textContent = Phi.toFixed(4);
@@ -85,6 +109,9 @@ function calc() {
   updateFlowVisual(A, L, Phi, flowed);
 }
 
+/* ============================
+   図解アニメーション
+============================ */
 function updateDiagram(G, A, L, Phi, flowed) {
   const arrowFlow = document.getElementById("arrow-Flow");
   const nodeG = document.getElementById("node-G");
@@ -92,37 +119,26 @@ function updateDiagram(G, A, L, Phi, flowed) {
 
   const absPhi = Math.abs(Phi);
 
-  // Flow arrow thickness
   arrowFlow.style.strokeWidth = flowed ? (2 + Math.min(6, absPhi * 0.8)) : 2;
   arrowFlow.style.opacity = flowed ? Math.min(1, 0.3 + L) : 0.2;
 
-  // G node glow
-  const gGlow = flowed ? 0.4 + Math.min(0.6, Math.abs(G) * 0.2) : 0.2;
-  nodeG.style.filter = `drop-shadow(0 0 6px rgba(180,107,255,${gGlow}))`;
-
-  // Φ node glow
-  const phiGlow = flowed ? 0.4 + Math.min(0.6, absPhi * 0.15) : 0.2;
-  nodePhi.style.filter = `drop-shadow(0 0 8px rgba(255,95,122,${phiGlow}))`;
+  nodeG.style.filter = `drop-shadow(0 0 6px rgba(180,107,255,${flowed ? 0.6 : 0.2}))`;
+  nodePhi.style.filter = `drop-shadow(0 0 8px rgba(255,95,122,${flowed ? 0.6 : 0.2}))`;
 }
 
+/* ============================
+   Flow アニメーション
+============================ */
 function updateFlowVisual(A, L, Phi, flowed) {
   const arrow = document.getElementById("flow-arrow");
   const absPhi = Math.abs(Phi);
 
-  // 太さ
-  const baseHeight = 6;
-  const newHeight = flowed ? baseHeight + Math.min(16, absPhi * 1.2) : baseHeight;
-  arrow.style.height = `${newHeight}px`;
-
-  // 透明度
+  arrow.style.height = flowed ? `${6 + Math.min(16, absPhi * 1.2)}px` : "6px";
   arrow.style.opacity = flowed ? Math.min(1, 0.2 + L) : 0.15;
 
-  // 方向（A）
   const angle = Math.atan2(A[1], A[0]) * 180 / Math.PI;
   arrow.style.transform = `rotate(${angle}deg)`;
 
-  // 速度（アニメーション周期）
-  const baseDuration = 1.2;
-  const duration = flowed ? Math.max(0.25, baseDuration / (1 + absPhi)) : 2.0;
+  const duration = flowed ? Math.max(0.25, 1.2 / (1 + absPhi)) : 2.0;
   arrow.style.animationDuration = `${duration}s`;
 }
