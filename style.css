@@ -279,6 +279,41 @@ input[type="number"]:focus, select:focus {
 }
 
 /* Presets */
+
+#preset-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.preset-card {
+  padding: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #050814;
+  font-weight: 600;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.preset-card:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.1);
+}
+
+.preset-card .unit {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* 色テーマ */
+.electric { background: #4AA3FF; }
+.heat     { background: #FF6B6B; }
+.water    { background: #3ED6C4; }
+.economy  { background: #FFD966; }
+.info     { background: #B46BFF; }
+
+
 #preset-section {
   margin-top: 12px;
   background: #11162a;
