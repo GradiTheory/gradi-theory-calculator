@@ -180,4 +180,3 @@ function updateFlowVisual(A, L, Phi, flowed) {
   const angle = Math.atan2(A[1], A[0]) * 180 / Math.PI;
   arrow.style.transform = `rotate(${angle}deg)`;
 }
-
