@@ -100,7 +100,9 @@ function calc() {
   const outG = document.getElementById("output-G");
   const outPhi = document.getElementById("output-Phi");
 
-  /* R（モノ・ソラ比） */
+  /* ============================
+     R（モノ・ソラ比）
+  ============================ */
   let R = (S !== 0) ? (M / S) : Infinity;
 
   const outR = document.getElementById("output-R");
@@ -121,7 +123,9 @@ function calc() {
     rState.textContent = "均衡";
   }
 
-  /* G（偏り） */
+  /* ============================
+     G（偏り）
+  ============================ */
   let Graw = M - S;
   let G = normalizeG && (M + S !== 0) ? (M - S) / (M + S) : Graw;
 
@@ -174,4 +178,6 @@ function updateFlowVisual(A, L, Phi, flowed) {
   arrow.style.opacity = flowed ? Math.min(1, 0.2 + L) : 0.15;
 
   const angle = Math.atan2(A[1], A[0]) * 180 / Math.PI;
-  arrow.style.transform = `rotate(${angle}deg)
+  arrow.style.transform = `rotate(${angle}deg)`;
+}
+
