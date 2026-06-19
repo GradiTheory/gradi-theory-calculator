@@ -1,101 +1,160 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Gradi Theory Flow Calculator</title>
+  <title>Gradi Theory Calculator</title>
   <link rel="stylesheet" href="style.css">
+  <!-- MathJax -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
+  <header>
+    <h1>Gradi Theory 計算サイト</h1>
+    <p>モノ(M)とソラ(S)から偏り(G)が生まれ、方向(A)と利用しやすさ(L)によって流れ(Φ)が生じる。</p>
+  </header>
 
-<div class="container">
+  <!-- ① 理論図解 -->
+  <section id="diagram-section">
+    <h2>理論図解</h2>
+    <div id="diagram-wrapper">
+      <svg id="gradi-diagram" viewBox="0 0 400 225">
+        <!-- M -->
+        <circle id="node-M" cx="80" cy="60" r="20" class="node-m" />
+        <text x="80" y="65" class="node-label">M</text>
 
-  <!-- 左：SVG 図解 -->
-  <div class="diagram">
-    <svg id="gradi-svg" width="600" height="250" viewBox="0 0 1200 500">
+        <!-- S -->
+        <circle id="node-S" cx="80" cy="160" r="20" class="node-s" />
+        <text x="80" y="165" class="node-label">S</text>
 
-      <!-- U Box -->
-      <rect x="80" y="140" width="180" height="120" rx="12"
-            stroke="#4A90E2" stroke-width="3" fill="none"/>
-      <text x="170" y="205" font-size="48" text-anchor="middle"
-            fill="#4A90E2" font-family="sans-serif">U</text>
-      <text x="170" y="245" font-size="20" text-anchor="middle"
-            fill="#333333" font-family="sans-serif">偏り / 差 / 勾配</text>
+        <!-- G -->
+        <circle id="node-G" cx="200" cy="110" r="22" class="node-g" />
+        <text x="200" y="115" class="node-label">G</text>
 
-      <!-- VU Arrow -->
-      <line id="vu-line" x1="280" y1="200" x2="400" y2="200"
-            stroke="#4A90E2" stroke-width="2"/>
-      <polygon id="vu-arrow" points="400,200 385,190 385,210"
-               fill="#4A90E2"/>
+        <!-- A / L -->
+        <circle id="node-AL" cx="310" cy="60" r="20" class="node-al" />
+        <text x="310" y="55" class="node-label-small">A</text>
+        <text x="310" y="70" class="node-label-small">L</text>
 
-      <!-- L Box -->
-      <rect x="440" y="140" width="180" height="120" rx="12"
-            stroke="#F5A623" stroke-width="3" fill="none"/>
-      <text x="530" y="205" font-size="48" text-anchor="middle"
-            fill="#F5A623" font-family="sans-serif">L</text>
-      <text x="530" y="245" font-size="20" text-anchor="middle"
-            fill="#333333" font-family="sans-serif">流れやすさ / 伝わりやすさ</text>
+        <!-- Φ -->
+        <circle id="node-Phi" cx="310" cy="170" r="22" class="node-phi" />
+        <text x="310" y="175" class="node-label">Φ</text>
 
-      <!-- Φ Arrow（動く部分） -->
-      <line id="phi-line" x1="640" y1="200" x2="640" y2="200"
-            stroke="#7ED321" stroke-width="6"/>
-      <polygon id="phi-arrow" points="640,200 620,185 620,215"
-               fill="#7ED321"/>
+        <!-- M→G -->
+        <line id="arrow-MG" x1="100" y1="60" x2="178" y2="100" class="arrow" />
+        <!-- S→G -->
+        <line id="arrow-SG" x1="100" y1="160" x2="178" y2="120" class="arrow" />
+        <!-- G→AL -->
+        <line id="arrow-GAL" x1="222" y1="100" x2="290" y2="70" class="arrow" />
+        <!-- AL→Φ（Flow） -->
+        <line id="arrow-Flow" x1="310" y1="82" x2="310" y2="148" class="arrow-flow" />
+      </svg>
+    </div>
+  </section>
 
-      <!-- 式 -->
-      <text x="600" y="340" font-size="28" text-anchor="middle"
-            fill="#333333" font-family="serif">
-        Φ = ∇U · L
-      </text>
+  <!-- ② 計算フォーム -->
+  <section id="form-section">
+    <h2>入力と計算</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="input-M">M（モノ：集める性質）</label>
+        <input id="input-M" type="number" step="0.01" value="10">
+      </div>
+      <div class="form-group">
+        <label for="input-S">S（ソラ：均す性質）</label>
+        <input id="input-S" type="number" step="0.01" value="3">
+      </div>
+      <div class="form-group">
+        <label for="input-A">A（方向）</label>
+        <select id="input-A">
+          <option value="1,0">→ (1,0)</option>
+          <option value="-1,0">← (-1,0)</option>
+          <option value="0,1">↑ (0,1)</option>
+          <option value="0,-1">↓ (0,-1)</option>
+          <option value="1,1">↗ (1,1)</option>
+          <option value="1,-1">↘ (1,-1)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="input-L">L（利用しやすさ）</label>
+        <input id="input-L" type="number" step="0.01" value="0.8">
+      </div>
+      <div class="form-group">
+        <label for="input-T">T（閾値）</label>
+        <input id="input-T" type="number" step="0.01" value="0.1">
+      </div>
+      <div class="form-group checkbox-group">
+        <label>
+          <input id="input-normalize-G" type="checkbox">
+          G を正規化する：$G = \dfrac{M-S}{M+S}$
+        </label>
+      </div>
+    </div>
+    <div class="button-row">
+      <button id="btn-calc">計算する</button>
+      <span id="status-message"></span>
+    </div>
 
-      <!-- Φ の単位（SVG側） -->
-      <text id="phiUnitSvg" x="600" y="380" font-size="22" text-anchor="middle"
-            fill="#555" font-family="serif">
-        （単位: -）
-      </text>
+    <div class="result-grid">
+      <div class="result-item">
+        <div class="result-label">G（偏り）</div>
+        <div id="output-G" class="result-value">-</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">Φ（流れ）</div>
+        <div id="output-Phi" class="result-value">-</div>
+      </div>
+    </div>
+  </section>
 
-    </svg>
-  </div>
+  <!-- ③ 計算式（横方向） -->
+  <section id="formula-section">
+    <h2>計算式</h2>
+    <div id="formula-row">
+      <div class="formula-item">\( G = M - S \)</div>
+      <div class="formula-separator">｜</div>
+      <div class="formula-item">\( \Phi = A L (M - S) \)</div>
+      <div class="formula-separator">｜</div>
+      <div class="formula-item">\( |M - S| &lt; T \Rightarrow \Phi = 0 \)</div>
+    </div>
+  </section>
 
-  <!-- 右：計算フォーム -->
-  <div class="form">
-    <h2>Gradi Theory 計算</h2>
+  <!-- ④ Flow 視覚化 -->
+  <section id="flow-section">
+    <h2>流れの可視化</h2>
+    <div id="flow-visual">
+      <div id="flow-arrow-wrapper">
+        <div id="flow-arrow"></div>
+      </div>
+      <div id="flow-info">
+        <div>太さ：|Φ| に比例</div>
+        <div>速度：|Φ| に反比例</div>
+        <div>透明度：L に比例</div>
+        <div>向き：A によって回転</div>
+      </div>
+    </div>
+  </section>
 
-    <label>偏り U</label>
-    <input id="inputU" type="number" step="0.1" value="100">
+  <!-- ⑤ プリセット -->
+  <section id="preset-section">
+    <h2>プリセット（現象の例）</h2>
+    <div id="preset-buttons">
+      <button data-preset="electric">電気（電位差 → 電流）</button>
+      <button data-preset="heat">熱（温度差 → 熱流）</button>
+      <button data-preset="water">水（高さ差 → 水流）</button>
+      <button data-preset="economy">経済（需要差 → 資金流）</button>
+      <button data-preset="info">情報（関心差 → 情報流）</button>
+    </div>
+  </section>
 
-    <label>利用しやすさ L</label>
-    <input id="inputL" type="number" step="0.1" value="10">
-
-    <button id="calcBtn">計算する</button>
-
-    <h3>結果</h3>
-    <p>Φ（流れ）: <span id="phiValue">-</span></p>
-    <p>向き: <span id="direction">-</span></p>
-    <p>Φ の単位: <span id="phiUnit">-</span></p>
-    <p>Φ の意味: <span id="phiMeaning">-</span></p>
-
-    <div class="presets">
-  <h3>プリセット</h3>
-  <button onclick="applyPreset('electric')">電気</button>
-  <button onclick="applyPreset('heat')">熱</button>
-  <button onclick="applyPreset('diffusion')">拡散</button>
-  <button onclick="applyPreset('behavior')">行動</button>
-  <button onclick="applyPreset('information')">情報</button>
-  <button onclick="applyPreset('light')">光</button>
-  <button onclick="applyPreset('pressure')">圧力</button>
-  <button onclick="applyPreset('economy')">経済</button>
-</div>
-
-
-    <h3>説明</h3>
-    <p>U の意味: <span id="uDesc">-</span></p>
-    <p>L の意味: <span id="lDesc">-</span></p>
-    <p>U の単位: <span id="uUnit">-</span></p>
-    <p>L の単位: <span id="lUnit">-</span></p>
-  </div>
-
-</div>
-
-<script src="script.js"></script>
+  <footer>
+    <p>Gradi Theory Ver.0.4 / モノとソラによる偏りと流れの理論</p>
+  </footer>
 </body>
 </html>
